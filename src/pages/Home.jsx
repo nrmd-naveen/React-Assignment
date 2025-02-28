@@ -19,9 +19,17 @@ const Home = () => {
         fetchData();
     }, []);
     
+    //improved search based on querry change
+    useEffect(() => {
+        setFilteredData(
+            productData.filter(item => item.name.toLowerCase().includes(query.toLowerCase()))
+        );
+    }, [query, productData]);
+
+    //probably not needed
     const handleSearch = (query) => {
         console.log(query);
-        const filteredData = productData.filter(data => data.name.toLowerCase().includes(query.toLowerCase()));
+        const filteredData = data.filter(item => item.name && item.price && typeof item.price === "string");
         setFilteredData(filteredData);
     };
     return <>
@@ -32,7 +40,7 @@ const Home = () => {
                 placeholder="Search beers..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                />
+            />
             <button
                 className="cursor-pointer bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg"
                 onClick={() => handleSearch(query)}
@@ -42,14 +50,16 @@ const Home = () => {
                 />
             </button>        
         </div>
+
         <div className="min-h-screen flex flex-wrap gap-4 justify-center items-center">
-
-
-        {filteredData.length > 0 ?
-            filteredData.map((data) => {
-                return <Product data={data} key={data.id} />
-            }) : ( productData.length <= 0 ? " Please wait ..." : " No Product Found " ) 
-        }
+            {filteredData.length > 0 ?
+                filteredData.map((data) => {
+                    return <Product data={data} key={data.id} />
+                }) : (
+                    <p className="text-gray-600">
+                        {productData.length <= 0 ? " Please wait ..." : " No Product Found "}
+                    </p>
+                )}
         </div>
     </>
 };
